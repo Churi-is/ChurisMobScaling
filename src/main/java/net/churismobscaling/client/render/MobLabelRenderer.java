@@ -1,6 +1,5 @@
 package net.churismobscaling.client.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.churismobscaling.ChurisMobScalingMain;
 import net.churismobscaling.api.MobLevelApi;
 import net.churismobscaling.client.render.util.RenderUtils;
