@@ -90,8 +90,8 @@ public class LocationLevelRenderer {
         int level = LevelCalculator.calculateLevelAtLocation(client.world, playerX, playerZ);
         float damageMultiplier = LevelCalculator.calculateAttackMultiplier(level);
         
-        // Format damage multiplier as a percentage increase (e.g., 1.5x -> +50%)
-        String damageIncreaseText = String.format("%d%%", Math.round((damageMultiplier - 1) * 100));
+        // Format damage multiplier as a percentage increase (e.g., 1.5x -> +50%), if it is negative add - if its positive add +
+        String damageIncreaseText = String.format("%s%d%%", (damageMultiplier < 1 ? "" : "+"), Math.round((damageMultiplier - 1) * 100));
         
         // Create text components for the HUD
         Text levelText = Text.literal("Area Level: ")
@@ -101,7 +101,7 @@ public class LocationLevelRenderer {
         
         Text damageText = Text.literal("Enemy Damage: ")
             .setStyle(Style.EMPTY.withColor(Formatting.WHITE))
-            .append(Text.literal("+" + damageIncreaseText)
+            .append(Text.literal(damageIncreaseText)
             .setStyle(Style.EMPTY.withColor(getDangerColor(damageMultiplier, config))));
         
         TextRenderer textRenderer = client.textRenderer;
