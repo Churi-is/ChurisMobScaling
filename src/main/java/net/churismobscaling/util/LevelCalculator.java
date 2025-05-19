@@ -84,7 +84,7 @@ public class LevelCalculator {
         // Closer to (0,0) results in a level closer to MINIMUM_MOB_LEVEL.
         if (distanceFromSpawn < config.getSpawnInfluenceRadius()) {
             double spawnScaleFactor = distanceFromSpawn / config.getSpawnInfluenceRadius();
-            finalLevel = MathHelper.lerp(spawnScaleFactor, potentialLevel, MINIMUM_MOB_LEVEL);
+            finalLevel = MathHelper.lerp(spawnScaleFactor, MINIMUM_MOB_LEVEL, potentialLevel);
         } else {
             finalLevel = potentialLevel;
         }
