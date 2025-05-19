@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.churismobscaling.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MobEntityMixin",
+    "LivingEntityMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

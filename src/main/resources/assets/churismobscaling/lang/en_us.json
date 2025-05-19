@@ -1,0 +1,74 @@
+{
+  "config.churismobscaling.title": "Churi's Mob Scaling",
+  "config.churismobscaling.category.core": "Core Settings",
+  "config.churismobscaling.category.mob_stats": "Mob Stats",
+  "config.churismobscaling.category.loot": "Loot & Experience Settings",
+  "config.churismobscaling.category.display": "Display Settings",
+  
+  "config.churismobscaling.enable_mod": "Enable Mod",
+  "config.churismobscaling.enable_mod.tooltip": "Enable or disable the mod completely",
+  
+  "config.churismobscaling.max_level": "Maximum Level",
+  "config.churismobscaling.max_level.tooltip": "The maximum level a mob can reach",
+  
+  "config.churismobscaling.noise_scale": "Noise Scale",
+  "config.churismobscaling.noise_scale.tooltip": "Controls the size of level regions (higher values = larger regions)",
+  
+  "config.churismobscaling.min_noise_level_percentage": "Minimum Noise Level Percentage",
+  "config.churismobscaling.min_noise_level_percentage.tooltip": "The minimum percentage of the max level from noise (0.25 = 25%)",
+  
+  "config.churismobscaling.spawn_influence_radius": "Spawn Influence Radius",
+  "config.churismobscaling.spawn_influence_radius.tooltip": "Distance in blocks from spawn where difficulty scaling begins",
+  
+  "config.churismobscaling.min_total_health_bonus": "Minimum Health Modifier",
+  "config.churismobscaling.min_total_health_bonus.tooltip": "Minimum health modifier at level 1 (-0.9 = 10% of normal health)",
+  
+  "config.churismobscaling.max_total_health_bonus": "Maximum Health Modifier",
+  "config.churismobscaling.max_total_health_bonus.tooltip": "Maximum health modifier at max level (10.0 = 11x normal health)",
+    
+  "config.churismobscaling.min_total_attack_bonus": "Minimum Attack Modifier",
+  "config.churismobscaling.min_total_attack_bonus.tooltip": "Minimum attack modifier at level 1 (-0.9 = 10% of normal damage)",
+  
+  "config.churismobscaling.max_total_attack_bonus": "Maximum Attack Modifier",
+  "config.churismobscaling.max_total_attack_bonus.tooltip": "Maximum attack modifier at max level (5.0 = 6x normal damage)",
+  
+  "config.churismobscaling.min_total_loot_bonus": "Minimum Loot Modifier",
+  "config.churismobscaling.min_total_loot_bonus.tooltip": "Minimum loot modifier at level 1 (-0.9 = 10% of normal loot)",
+  
+  "config.churismobscaling.max_total_loot_bonus": "Maximum Loot Modifier",
+  "config.churismobscaling.max_total_loot_bonus.tooltip": "Maximum loot modifier at max level (4.0 = 5x normal loot)",
+  
+  "config.churismobscaling.loot_bonus_affects_xp": "Use Legacy XP System",
+  "config.churismobscaling.loot_bonus_affects_xp.tooltip": "If enabled, XP drops will be scaled by loot multiplier instead of dedicated XP multiplier",
+  
+  "config.churismobscaling.min_total_xp_bonus": "Minimum XP Modifier",
+  "config.churismobscaling.min_total_xp_bonus.tooltip": "Minimum XP modifier at level 1 (-0.5 = 50% of normal XP)",
+  
+  "config.churismobscaling.max_total_xp_bonus": "Maximum XP Modifier",
+  "config.churismobscaling.max_total_xp_bonus.tooltip": "Maximum XP modifier at max level (4.0 = 5x normal XP)",
+
+  "config.churismobscaling.category.visual": "Visual Effects",
+  
+  "config.churismobscaling.enable_mob_label_hud": "Enable Mob HUD",
+  "config.churismobscaling.enable_mob_label_hud.tooltip": "Toggle the display of the mob information HUD when looking at entities",
+  
+  "config.churismobscaling.mob_label_hud_scale": "Mob HUD Scale",
+  "config.churismobscaling.mob_label_hud_scale.tooltip": "Adjust the size of the mob information HUD (0.5 = smaller, 2.0 = larger)",
+  
+  "config.churismobscaling.mob_label_hud_duration": "Mob HUD Duration",
+  "config.churismobscaling.mob_label_hud_duration.tooltip": "How long the mob HUD stays visible after looking away (in milliseconds)",
+  
+  "config.churismobscaling.enable_location_level_hud": "Show Location Level HUD",
+  "config.churismobscaling.enable_location_level_hud.tooltip": "Toggle the display of the current location's level on the screen",
+  
+  "config.churismobscaling.location_level_hud_scale": "Location Level HUD Scale",
+  "config.churismobscaling.location_level_hud_scale.tooltip": "Adjust the size of the location level HUD (0.5 = smaller, 2.0 = larger)",
+  
+  "config.churismobscaling.location_level_hud_position": "Location Level HUD Position",
+  "config.churismobscaling.location_level_hud_position.tooltip": "Where to display the location level HUD on the screen",
+  
+  "config.churismobscaling.location_level_hud_position.top_left": "Top Left",
+  "config.churismobscaling.location_level_hud_position.top_right": "Top Right",
+  "config.churismobscaling.location_level_hud_position.bottom_left": "Bottom Left",
+  "config.churismobscaling.location_level_hud_position.bottom_right": "Bottom Right"
+}
