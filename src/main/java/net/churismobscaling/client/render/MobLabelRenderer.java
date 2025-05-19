@@ -3,17 +3,12 @@ package net.churismobscaling.client.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.churismobscaling.ChurisMobScalingMain;
 import net.churismobscaling.api.MobLevelApi;
+import net.churismobscaling.client.render.util.RenderUtils;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -190,7 +185,7 @@ public class MobLabelRenderer {
         TextRenderer textRenderer = client.textRenderer;
         VertexConsumerProvider.Immediate immediate = client.getBufferBuilders().getEntityVertexConsumers();
 
-        setupRenderState();
+        RenderUtils.setupBlendDisableDepthDisableCull();
         matrices.push();
 
         positionHudAboveEntity(entity, context, matrices);
@@ -218,28 +213,7 @@ public class MobLabelRenderer {
 
         immediate.draw(); // Draw all batched elements
         matrices.pop();
-        resetRenderState();
-    }
-
-    /**
-     * Sets up OpenGL render states for transparent UI rendering.
-     * Disables depth testing and culling, enables blending.
-     */
-    private static void setupRenderState() {
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc(); // Standard alpha blending
-        RenderSystem.disableDepthTest();  // Draw on top of everything
-        RenderSystem.disableCull();       // Draw both sides if scaled negatively (though not intended here)
-    }
-
-    /**
-     * Resets OpenGL render states to their defaults after HUD rendering.
-     * Re-enables depth testing and culling, disables blending.
-     */
-    private static void resetRenderState() {
-        RenderSystem.enableCull();
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableBlend();
+        RenderUtils.resetDepthCullDisableBlend();
     }
 
     /**
@@ -410,15 +384,15 @@ public class MobLabelRenderer {
                                                float filledWidth, int fillColor) {
         // Draw health bar border (black outline)
         float border = HEALTH_BAR_OUTLINE_THICKNESS_PIXELS;
-        drawRectangle(matrices, barX - border, barY - border,
-                     totalWidth + (border * 2), barHeight + (border * 2), COLOR_BLACK_OPAQUE);
+        RenderUtils.drawSolidRectangle(matrices, barX - border, barY - border,
+                     totalWidth + (border * 2), barHeight + (border * 2), COLOR_BLACK_OPAQUE, MAX_LIGHT_TEXTURE_UV);
 
         // Draw health bar background (dark gray)
-        drawRectangle(matrices, barX, barY, totalWidth, barHeight, COLOR_HEALTH_BAR_BACKGROUND_OPAQUE);
+        RenderUtils.drawSolidRectangle(matrices, barX, barY, totalWidth, barHeight, COLOR_HEALTH_BAR_BACKGROUND_OPAQUE, MAX_LIGHT_TEXTURE_UV);
 
         // Draw health bar filled portion
         if (filledWidth > 0) {
-            drawRectangle(matrices, barX, barY, filledWidth, barHeight, fillColor);
+            RenderUtils.drawSolidRectangle(matrices, barX, barY, filledWidth, barHeight, fillColor, MAX_LIGHT_TEXTURE_UV);
         }
 
         // Draw health segments (vertical lines)
@@ -427,55 +401,10 @@ public class MobLabelRenderer {
             float segmentLineX = barX + (segmentWidthInterval * i);
             // Only draw segment lines if they are within the currently filled portion of the bar
             if (segmentLineX < barX + filledWidth) {
-                drawRectangle(matrices, segmentLineX, barY,
+                RenderUtils.drawSolidRectangle(matrices, segmentLineX, barY,
                               HEALTH_BAR_SEGMENT_LINE_THICKNESS_PIXELS, barHeight,
-                              COLOR_HEALTH_BAR_SEGMENT_TRANSLUCENT);
+                              COLOR_HEALTH_BAR_SEGMENT_TRANSLUCENT, MAX_LIGHT_TEXTURE_UV);
             }
         }
-    }
-
-    /**
-     * Utility method to draw a simple, colored, untextured rectangle.
-     *
-     * @param matrices The MatrixStack.
-     * @param x The X position of the rectangle.
-     * @param y The Y position of the rectangle.
-     * @param width The width of the rectangle.
-     * @param height The height of the rectangle.
-     * @param color The ARGB color of the rectangle.
-     */
-    private static void drawRectangle(MatrixStack matrices, float x, float y, float width, float height, int color) {
-        // Extract ARGB components
-        int alpha = (color >> 24) & 0xFF;
-        int red = (color >> 16) & 0xFF;
-        int green = (color >> 8) & 0xFF;
-        int blue = color & 0xFF;
-
-        float x1 = x;
-        float x2 = x + width;
-        float y1 = y;
-        float y2 = y + height;
-
-        org.joml.Matrix4f matrix = matrices.peek().getPositionMatrix();
-        Tessellator tessellator = Tessellator.getInstance();
-        // BufferBuilder bufferBuilder = tessellator.getBuffer(); // Old way
-        
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-
-        // Define vertices for the quad
-        // Texture coordinates (u, v) are not used for solid color but are part of the vertex format.
-        // Overlay and Light are set to standard values for UI elements.
-        // Normal is set for a 2D quad facing the camera.
-        float u = 0, v = 0; // Texture coordinates
-        int overlay = 0;    // No overlay
-        float normalX = 0, normalY = 0, normalZ = 1; // Standard normal
-
-        bufferBuilder.vertex(matrix, x1, y1, 0).color(red, green, blue, alpha).texture(u, v).overlay(overlay).light(MAX_LIGHT_TEXTURE_UV).normal(normalX, normalY, normalZ);
-        bufferBuilder.vertex(matrix, x1, y2, 0).color(red, green, blue, alpha).texture(u, v).overlay(overlay).light(MAX_LIGHT_TEXTURE_UV).normal(normalX, normalY, normalZ);
-        bufferBuilder.vertex(matrix, x2, y2, 0).color(red, green, blue, alpha).texture(u, v).overlay(overlay).light(MAX_LIGHT_TEXTURE_UV).normal(normalX, normalY, normalZ);
-        bufferBuilder.vertex(matrix, x2, y1, 0).color(red, green, blue, alpha).texture(u, v).overlay(overlay).light(MAX_LIGHT_TEXTURE_UV).normal(normalX, normalY, normalZ);
-
-        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
     }
 }

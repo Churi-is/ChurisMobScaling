@@ -164,7 +164,6 @@ public class LevelCalculator {
 
         // Linearly interpolate the actual bonus amount based on the progressFactor,
         // scaling between the configured minBonus and maxBonus.
-        // float bonus = minBonus + progressFactor * (maxBonus - minBonus);
         float bonus = MathHelper.lerp(progressFactor, minBonus, maxBonus);
 
         // Ensure the calculated bonus strictly adheres to the [minBonus, maxBonus] range.
@@ -184,21 +183,7 @@ public class LevelCalculator {
      */
     public static float calculateAttackMultiplier(int level) {
         ModConfig config = ChurisMobScalingMain.getConfig();
-        int maxLevel = config.getMaxLevel();
-        float minBonus = config.getMinTotalAttackBonus();
-        float maxBonus = config.getMaxTotalAttackBonus();
-
-        if (maxLevel <= MINIMUM_MOB_LEVEL || level <= MINIMUM_MOB_LEVEL) {
-            return 1.0f + MathHelper.clamp(minBonus, Math.min(minBonus, maxBonus), Math.max(minBonus, maxBonus));
-        }
-
-        float progressFactor = (float) (level - MINIMUM_MOB_LEVEL) / (maxLevel - MINIMUM_MOB_LEVEL);
-        progressFactor = MathHelper.clamp(progressFactor, 0.0f, 1.0f);
-
-        float bonus = minBonus + progressFactor * (maxBonus - minBonus);
-        bonus = MathHelper.clamp(bonus, Math.min(minBonus, maxBonus), Math.max(minBonus, maxBonus));
-
-        return 1.0f + bonus;
+        return calculateGenericMultiplier(level, config.getMinTotalAttackBonus(), config.getMaxTotalAttackBonus(), config);
     }
 
     /**
@@ -210,21 +195,7 @@ public class LevelCalculator {
      */
     public static float calculateLootMultiplier(int level) {
         ModConfig config = ChurisMobScalingMain.getConfig();
-        int maxLevel = config.getMaxLevel();
-        float minBonus = config.getMinTotalLootBonus();
-        float maxBonus = config.getMaxTotalLootBonus();
-
-        if (maxLevel <= MINIMUM_MOB_LEVEL || level <= MINIMUM_MOB_LEVEL) {
-            return 1.0f + MathHelper.clamp(minBonus, Math.min(minBonus, maxBonus), Math.max(minBonus, maxBonus));
-        }
-
-        float progressFactor = (float) (level - MINIMUM_MOB_LEVEL) / (maxLevel - MINIMUM_MOB_LEVEL);
-        progressFactor = MathHelper.clamp(progressFactor, 0.0f, 1.0f);
-
-        float bonus = minBonus + progressFactor * (maxBonus - minBonus);
-        bonus = MathHelper.clamp(bonus, Math.min(minBonus, maxBonus), Math.max(minBonus, maxBonus));
-
-        return 1.0f + bonus;
+        return calculateGenericMultiplier(level, config.getMinTotalLootBonus(), config.getMaxTotalLootBonus(), config);
     }
 
     /**
@@ -236,20 +207,43 @@ public class LevelCalculator {
      */
     public static float calculateXpMultiplier(int level) {
         ModConfig config = ChurisMobScalingMain.getConfig();
-        int maxLevel = config.getMaxLevel();
-        float minBonus = config.getMinTotalXpBonus();
-        float maxBonus = config.getMaxTotalXpBonus();
+        return calculateGenericMultiplier(level, config.getMinTotalXpBonus(), config.getMaxTotalXpBonus(), config);
+    }
 
+    /**
+     * Private helper method to calculate a generic attribute multiplier.
+     *
+     * @param level The mob's level.
+     * @param minBonus The minimum bonus for this attribute from config.
+     * @param maxBonus The maximum bonus for this attribute from config.
+     * @param config The mod configuration.
+     * @return The calculated attribute multiplier.
+     */
+    private static float calculateGenericMultiplier(int level, float minBonus, float maxBonus, ModConfig config) {
+        int maxLevel = config.getMaxLevel();
+
+        // If the configured maxLevel is at or below the minimum possible level,
+        // or if the current level is at the minimum, the mob is at its base progression.
         if (maxLevel <= MINIMUM_MOB_LEVEL || level <= MINIMUM_MOB_LEVEL) {
+            // Apply the configured minimum bonus. Clamp to handle potential config where minBonus > maxBonus.
             return 1.0f + MathHelper.clamp(minBonus, Math.min(minBonus, maxBonus), Math.max(minBonus, maxBonus));
         }
 
+        // Determine how far the current level has progressed from MINIMUM_MOB_LEVEL towards maxLevel.
+        // progressFactor is a value from 0.0 (at MINIMUM_MOB_LEVEL) to 1.0 (at maxLevel).
         float progressFactor = (float) (level - MINIMUM_MOB_LEVEL) / (maxLevel - MINIMUM_MOB_LEVEL);
+        // Clamp progressFactor to [0, 1] to handle levels outside the expected [MINIMUM_MOB_LEVEL, maxLevel] range.
         progressFactor = MathHelper.clamp(progressFactor, 0.0f, 1.0f);
 
-        float bonus = minBonus + progressFactor * (maxBonus - minBonus);
+        // Linearly interpolate the actual bonus amount based on the progressFactor,
+        // scaling between the configured minBonus and maxBonus.
+        float bonus = MathHelper.lerp(progressFactor, minBonus, maxBonus);
+
+        // Ensure the calculated bonus strictly adheres to the [minBonus, maxBonus] range.
+        // This is a safeguard, especially if minBonus > maxBonus is possible in the configuration.
         bonus = MathHelper.clamp(bonus, Math.min(minBonus, maxBonus), Math.max(minBonus, maxBonus));
 
+        // The final multiplier is 100% (1.0f) plus the calculated bonus.
         return 1.0f + bonus;
     }
 }

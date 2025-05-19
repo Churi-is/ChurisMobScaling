@@ -10,6 +10,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.churismobscaling.ChurisMobScalingMain;
+import net.churismobscaling.client.render.util.RenderUtils;
 import net.churismobscaling.config.ModConfig;
 import net.churismobscaling.util.LevelCalculator;
 
@@ -34,14 +35,6 @@ public class LocationLevelRenderer {
 
     // Rendering constants
     private static final int FULL_BRIGHTNESS_LIGHT_LEVEL = 15728880;
-    private static final float RECTANGLE_DEFAULT_Z_OFFSET = 0.0f;
-    private static final float RECTANGLE_DEFAULT_TEXTURE_U = 0.0f;
-    private static final float RECTANGLE_DEFAULT_TEXTURE_V = 0.0f;
-    private static final int RECTANGLE_DEFAULT_OVERLAY = 0;
-    private static final float RECTANGLE_DEFAULT_NORMAL_X = 0.0f;
-    private static final float RECTANGLE_DEFAULT_NORMAL_Y = 0.0f;
-    private static final float RECTANGLE_DEFAULT_NORMAL_Z = 1.0f;
-
     // Thresholds for level coloring
     private static final float LEVEL_COLOR_THRESHOLD_GREEN_YELLOW = 0.3f;
     private static final float LEVEL_COLOR_THRESHOLD_YELLOW_GOLD = 0.6f;
@@ -139,7 +132,7 @@ public class LocationLevelRenderer {
                 break;
         }
         
-        setupRenderState();
+        RenderUtils.setupBlendDisableDepth();
         
         float scale = config.getLocationLevelHudScale();
         boolean isScaled = scale != 1.0f;
@@ -147,9 +140,9 @@ public class LocationLevelRenderer {
         if (isScaled) {
             matrices.push();
             // Translate to pivot point, scale, then translate back
-            matrices.translate(posX, posY, RECTANGLE_DEFAULT_Z_OFFSET);
+            matrices.translate(posX, posY, RenderUtils.RECTANGLE_DEFAULT_Z_OFFSET);
             matrices.scale(scale, scale, 1.0f);
-            matrices.translate(-posX, -posY, RECTANGLE_DEFAULT_Z_OFFSET);
+            matrices.translate(-posX, -posY, RenderUtils.RECTANGLE_DEFAULT_Z_OFFSET);
             
             // Adjust position for scaling to keep it in the correct corner
             if (hudPosition == HudPosition.TOP_RIGHT || hudPosition == HudPosition.BOTTOM_RIGHT) {
@@ -161,7 +154,7 @@ public class LocationLevelRenderer {
         }
         
         // Draw background with slight transparency
-        drawRectangle(matrices, posX, posY, totalWidth, totalHeight, HUD_BACKGROUND_COLOR);
+        RenderUtils.drawSolidRectangle(matrices, posX, posY, totalWidth, totalHeight, HUD_BACKGROUND_COLOR, FULL_BRIGHTNESS_LIGHT_LEVEL);
         
         VertexConsumerProvider.Immediate immediate = client.getBufferBuilders().getEntityVertexConsumers();
         
@@ -198,85 +191,7 @@ public class LocationLevelRenderer {
             matrices.pop(); // Restore matrix state if scaling was applied
         }
         
-        resetRenderState();
-    }
-    
-    /**
-     * Sets up the OpenGL render state for drawing the HUD.
-     * Enables blending and disables depth testing.
-     */
-    private static void setupRenderState() {
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableDepthTest();
-    }
-    
-    /**
-     * Resets the OpenGL render state after drawing the HUD.
-     * Disables blending and re-enables depth testing.
-     */
-    private static void resetRenderState() {
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableBlend();
-    }
-    
-    /**
-     * Utility method to draw a filled rectangle with a solid color.
-     * 
-     * @param matrices The MatrixStack for rendering.
-     * @param x The x-coordinate of the top-left corner.
-     * @param y The y-coordinate of the top-left corner.
-     * @param width The width of the rectangle.
-     * @param height The height of the rectangle.
-     * @param color The color of the rectangle (ARGB format).
-     */
-    private static void drawRectangle(MatrixStack matrices, float x, float y, float width, float height, int color) {
-        int alpha = (color >> 24) & 0xFF;
-        int red = (color >> 16) & 0xFF;
-        int green = (color >> 8) & 0xFF;
-        int blue = color & 0xFF;
-        
-        float x1 = x;
-        float x2 = x + width;
-        float y1 = y;
-        float y2 = y + height;
-        
-        org.joml.Matrix4f matrix = matrices.peek().getPositionMatrix();
-        net.minecraft.client.render.Tessellator tessellator = net.minecraft.client.render.Tessellator.getInstance();
-        
-        RenderSystem.setShader(net.minecraft.client.render.GameRenderer::getPositionColorProgram);
-        net.minecraft.client.render.BufferBuilder bufferBuilder = tessellator.begin(
-            net.minecraft.client.render.VertexFormat.DrawMode.QUADS, 
-            net.minecraft.client.render.VertexFormats.POSITION_COLOR
-        );
-        
-        // Add vertices for the rectangle
-        bufferBuilder.vertex(matrix, x1, y1, RECTANGLE_DEFAULT_Z_OFFSET)
-            .color(red, green, blue, alpha)
-            .texture(RECTANGLE_DEFAULT_TEXTURE_U, RECTANGLE_DEFAULT_TEXTURE_V) // Texture coordinates (not used but required by vertex format)
-            .overlay(RECTANGLE_DEFAULT_OVERLAY)
-            .light(FULL_BRIGHTNESS_LIGHT_LEVEL)
-            .normal(RECTANGLE_DEFAULT_NORMAL_X, RECTANGLE_DEFAULT_NORMAL_Y, RECTANGLE_DEFAULT_NORMAL_Z);
-        bufferBuilder.vertex(matrix, x1, y2, RECTANGLE_DEFAULT_Z_OFFSET)
-            .color(red, green, blue, alpha)
-            .texture(RECTANGLE_DEFAULT_TEXTURE_U, RECTANGLE_DEFAULT_TEXTURE_V)
-            .overlay(RECTANGLE_DEFAULT_OVERLAY)
-            .light(FULL_BRIGHTNESS_LIGHT_LEVEL)
-            .normal(RECTANGLE_DEFAULT_NORMAL_X, RECTANGLE_DEFAULT_NORMAL_Y, RECTANGLE_DEFAULT_NORMAL_Z);
-        bufferBuilder.vertex(matrix, x2, y2, RECTANGLE_DEFAULT_Z_OFFSET)
-            .color(red, green, blue, alpha)
-            .texture(RECTANGLE_DEFAULT_TEXTURE_U, RECTANGLE_DEFAULT_TEXTURE_V)
-            .overlay(RECTANGLE_DEFAULT_OVERLAY)
-            .light(FULL_BRIGHTNESS_LIGHT_LEVEL)
-            .normal(RECTANGLE_DEFAULT_NORMAL_X, RECTANGLE_DEFAULT_NORMAL_Y, RECTANGLE_DEFAULT_NORMAL_Z);
-        bufferBuilder.vertex(matrix, x2, y1, RECTANGLE_DEFAULT_Z_OFFSET)
-            .color(red, green, blue, alpha)
-            .texture(RECTANGLE_DEFAULT_TEXTURE_U, RECTANGLE_DEFAULT_TEXTURE_V)
-            .overlay(RECTANGLE_DEFAULT_OVERLAY)
-            .light(FULL_BRIGHTNESS_LIGHT_LEVEL)
-            .normal(RECTANGLE_DEFAULT_NORMAL_X, RECTANGLE_DEFAULT_NORMAL_Y, RECTANGLE_DEFAULT_NORMAL_Z);
-        
-        net.minecraft.client.render.BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+        RenderUtils.resetDepthDisableBlend();
     }
     
     /**
