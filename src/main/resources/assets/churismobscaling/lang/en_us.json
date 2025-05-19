@@ -38,9 +38,6 @@
   "config.churismobscaling.max_total_loot_bonus": "Maximum Loot Modifier",
   "config.churismobscaling.max_total_loot_bonus.tooltip": "Maximum loot modifier at max level (4.0 = 5x normal loot)",
   
-  "config.churismobscaling.loot_bonus_affects_xp": "Use Legacy XP System",
-  "config.churismobscaling.loot_bonus_affects_xp.tooltip": "If enabled, XP drops will be scaled by loot multiplier instead of dedicated XP multiplier",
-  
   "config.churismobscaling.min_total_xp_bonus": "Minimum XP Modifier",
   "config.churismobscaling.min_total_xp_bonus.tooltip": "Minimum XP modifier at level 1 (-0.5 = 50% of normal XP)",
   

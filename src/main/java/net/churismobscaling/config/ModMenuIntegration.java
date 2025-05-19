@@ -147,14 +147,6 @@ public class ModMenuIntegration implements ModMenuApi {
                 .setTooltip(Text.translatable("config.churismobscaling.max_total_loot_bonus.tooltip"))
                 .build());
                 
-        lootCategory.addEntry(entryBuilder.startBooleanToggle(
-                Text.translatable("config.churismobscaling.loot_bonus_affects_xp"),
-                config.getLootBonusAffectsXp())
-                .setDefaultValue(ModConfig.DEFAULT_LOOT_BONUS_AFFECTS_XP)
-                .setSaveConsumer(config::setLootBonusAffectsXp)
-                .setTooltip(Text.translatable("config.churismobscaling.loot_bonus_affects_xp.tooltip"))
-                .build());
-                
         lootCategory.addEntry(entryBuilder.startFloatField(
                 Text.translatable("config.churismobscaling.min_total_xp_bonus"),
                 config.getMinTotalXpBonus())

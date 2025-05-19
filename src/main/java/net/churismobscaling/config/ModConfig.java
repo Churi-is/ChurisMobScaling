@@ -54,7 +54,6 @@ public class ModConfig {
     public static final float MAX_MIN_TOTAL_LOOT_BONUS = 0f;
     public static final float DEFAULT_MAX_TOTAL_LOOT_BONUS = 4.0f;
     public static final float MIN_MAX_TOTAL_LOOT_BONUS = 0f;
-    public static final boolean DEFAULT_LOOT_BONUS_AFFECTS_XP = true;
 
     public static final float DEFAULT_MIN_TOTAL_XP_BONUS = -0.2f;
     public static final float MIN_MIN_TOTAL_XP_BONUS = -0.99f;
@@ -94,7 +93,6 @@ public class ModConfig {
     // Loot modifiers
     private float minTotalLootBonus = DEFAULT_MIN_TOTAL_LOOT_BONUS;
     private float maxTotalLootBonus = DEFAULT_MAX_TOTAL_LOOT_BONUS;
-    private boolean lootBonusAffectsXp = DEFAULT_LOOT_BONUS_AFFECTS_XP;
     
     // XP modifiers
     private float minTotalXpBonus = DEFAULT_MIN_TOTAL_XP_BONUS;
@@ -304,14 +302,6 @@ public class ModConfig {
 
     public void setMaxTotalLootBonus(float maxTotalLootBonus) {
         this.maxTotalLootBonus = maxTotalLootBonus;
-    }
-
-    public boolean getLootBonusAffectsXp() {
-        return lootBonusAffectsXp;
-    }
-
-    public void setLootBonusAffectsXp(boolean lootBonusAffectsXp) {
-        this.lootBonusAffectsXp = lootBonusAffectsXp;
     }
 
     public float getMinTotalXpBonus() {
